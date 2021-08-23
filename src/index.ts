@@ -76,6 +76,10 @@ type MySQLDumpFunc = (args: {
      */
     completeInsert?: boolean;
     /**
+     * Compress the result sql file via gzip.
+     */
+    compress?: boolean;
+    /**
      * Debug the command.
      */
     runDry?: boolean;
@@ -107,6 +111,7 @@ const mysqldump: MySQLDumpFunc = (args) => {
         delayedInsert,
         addDropTrigger,
         completeInsert,
+        compress,
         runDry,
         log,
     } = args
@@ -158,6 +163,10 @@ const mysqldump: MySQLDumpFunc = (args) => {
 
     if (completeInsert) {
         commands.push('--complete-insert');
+    }
+
+    if (compress) {
+        commands.push(`&& gzip ${resultFile}`)
     }
 
     return new Promise((resolve, reject) => {
