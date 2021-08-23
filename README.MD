@@ -3,6 +3,7 @@
 > Call mysqldump in nodejs through child_process.exec.
 
 [![npm version](http://img.shields.io/npm/v/mysqldump-wrapper.svg)](https://npmjs.org/package/mysqldump-wrapper)
+[![npm download](https://img.shields.io/npm/dy/mysqldump-wrapper)](https://npmjs.org/package/mysqldump-wrapper)
 
 ## Requirement
 
