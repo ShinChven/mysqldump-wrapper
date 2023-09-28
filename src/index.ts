@@ -87,6 +87,60 @@ type MySQLDumpFunc = (args: {
    * Print child_process.exec 's stdout and stderr
    */
   log?: boolean;
+  /**
+ * Tables to dump
+ */
+  tables?: string[];
+  /**
+   * Dump only the table structure, not the data
+   * --no-data
+   */
+  noData?: boolean;
+  /**
+   * Include stored routines (procedures and functions)
+   * --routines
+   */
+  routines?: boolean;
+  /**
+   * Include triggers
+   * --triggers
+   */
+  triggers?: boolean;
+  /**
+   * Include events
+   * --events
+   */
+  events?: boolean;
+  /**
+   * WHERE clause to filter rows
+   * --where
+   */
+  where?: string;
+  /**
+   * Dump all tables in a single transaction
+   * --single-transaction
+   */
+  singleTransaction?: boolean;
+  /**
+   * Dump binary strings in hexadecimal format
+   * --hex-blob
+   */
+  hexBlob?: boolean;
+  /**
+   * Tables to ignore
+   * --ignore-table
+   */
+  ignoreTable?: string[];
+  /**
+   * Less verbose output
+   * --compact
+   */
+  compact?: boolean;
+  /**
+   * Skip comments in the output SQL
+   * --skip-comments
+   */
+  skipComments?: boolean;
 }) => Promise<void>;
 
 /**
@@ -114,6 +168,17 @@ const mysqldump: MySQLDumpFunc = (args) => {
     compress,
     runDry,
     log,
+    tables,
+    noData,
+    routines,
+    triggers,
+    events,
+    where,
+    singleTransaction,
+    hexBlob,
+    ignoreTable,
+    compact,
+    skipComments,
   } = args
   const commands: Array<string> = [
     mysqldumpPath,
@@ -167,6 +232,52 @@ const mysqldump: MySQLDumpFunc = (args) => {
 
   if (compress) {
     commands.push(`&& gzip ${resultFile}`)
+  }
+
+  if (tables && tables.length > 0) {
+    commands.push(tables.join(' '));
+  }
+
+  if (noData) {
+    commands.push('--no-data');
+  }
+
+  if (routines) {
+    commands.push('--routines');
+  }
+
+  if (triggers) {
+    commands.push('--triggers');
+  }
+
+  if (events) {
+    commands.push('--events');
+  }
+
+  if (where) {
+    commands.push(`--where="${where}"`);
+  }
+
+  if (singleTransaction) {
+    commands.push('--single-transaction');
+  }
+
+  if (hexBlob) {
+    commands.push('--hex-blob');
+  }
+
+  if (ignoreTable && ignoreTable.length > 0) {
+    ignoreTable.forEach(table => {
+      commands.push(`--ignore-table=${database}.${table}`);
+    });
+  }
+
+  if (compact) {
+    commands.push('--compact');
+  }
+
+  if (skipComments) {
+    commands.push('--skip-comments');
   }
 
   return new Promise((resolve, reject) => {
